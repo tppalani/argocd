@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Assuming the secret is mounted at /secrets/mysecret
+SECRET_PATH="/secrets/mysecret"
+
+# Read the values from the secret files
+USERNAME=$(cat "$SECRET_PATH/username")
+PASSWORD=$(cat "$SECRET_PATH/password")
+
+# Use the secret values in your script
+echo "Username: $USERNAME"
+echo "Password: $PASSWORD"
+
+# Your script logic here
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+    - name: mycontainer
+      image: myimage
+      volumeMounts:
+        - name: secret-volume
+          mountPath: /secrets
+  volumes:
+    - name: secret-volume
+      secret:
+        secretName: mysecret
