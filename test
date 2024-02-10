@@ -29,3 +29,28 @@ spec:
     - name: secret-volume
       secret:
         secretName: mysecret
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: gcloud-auth-login
+spec:
+  steps:
+    - name: gcloud-auth
+      image: google/cloud-sdk:latest
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          echo "$GCLOUD_SERVICE_KEY" > /tmp/key.json && \
+          gcloud auth activate-service-account --key-file=/tmp/key.json
+      env:
+        - name: GCLOUD_SERVICE_KEY
+          value: "$(SecretKeyRef)"
+  params:
+    - name: SecretKeyRef
+      description: "Reference to the secret containing the service account key"
+      type: string
+---
