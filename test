@@ -54,3 +54,7 @@ spec:
       description: "Reference to the secret containing the service account key"
       type: string
 ---
+The google/cloud-sdk:latest image is used, which contains the gcloud command.
+The Task expects a secret containing the service account key to be provided as a parameter. This secret is referenced as SecretKeyRef.
+The gcloud auth activate-service-account command is used to authenticate using the provided service account key.
+You can use this Task as part of a Tekton PipelineRun to execute the gcloud auth login step within your pipeline. Ensure that the Tekton environment has access to the necessary credentials and permissions to execute gcloud commands and manage secrets. Additionally, customize the Task and PipelineRun according to your specific requirements and environment configurations.
