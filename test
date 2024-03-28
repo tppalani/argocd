@@ -21,3 +21,36 @@ roleRef:
   kind: Role
   name: pod-reader
   apiGroup: rbac.authorization.k8s.io
+
+Install Datadog Agent: If you haven't already, install the Datadog Agent on the server where your application is running. Follow the instructions provided by Datadog to install the agent.
+Configure Hikari Connection Pool: In your application's configuration file, ensure that HikariCP is configured to expose metrics. This typically involves setting the appropriate properties to enable JMX metrics.
+Enable JMX Integration: Configure your JVM to enable JMX monitoring. You might need to add JVM parameters like -Dcom.sun.management.jmxremote to enable remote JMX monitoring.
+Configure Datadog Agent: Edit the Datadog Agent configuration file to enable the JMX integration. You'll need to specify which JMX beans to collect metrics from. For HikariCP, you'll be interested in metrics related to the connection pool.
+Restart Datadog Agent: After making changes to the Datadog Agent configuration, restart the agent to apply the changes.
+Verify Metrics: Check the Datadog dashboard to ensure that metrics from the HikariCP connection pool are being collected and displayed properly.
+Create Dashboards and Alerts: Use Datadog's dashboarding capabilities to create visualizations that monitor the health and performance of your HikariCP connection pool. Set up alerts to notify you of any issues or anomalies.
+Here's an example snippet of how you might configure HikariCP to expose JMX metrics:
+
+java
+Copy code
+HikariConfig config = new HikariConfig();
+config.setJdbcUrl("jdbc:mysql://localhost/test");
+config.setUsername("username");
+config.setPassword("password");
+
+// Enable JMX monitoring
+config.addDataSourceProperty("dataSource.useInstrumentation", "true");
+config.addDataSourceProperty("dataSource.jmxEnabled", "true");
+And here's an example snippet of how you might configure the Datadog Agent to collect JMX metrics:
+
+yaml
+Copy code
+# datadog.yaml
+instances:
+  - host: localhost
+    port: 9999  # JMX port
+    name: jmx_instance
+    tools:
+      - connection_pool_metrics
+      - jvm
+Please note that the exact configuration may vary depending on your specific environment, so be sure to consult the documentation for both HikariCP and Datadog for detailed instructions relevant to your setup.
